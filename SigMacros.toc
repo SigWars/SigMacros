@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: SigMacros
+## Notes: Rotinas utilitárias
+## Author: Sig
+## Version: 1.0
+## SavedVariables: SigMacrosDB
+
+SigStacks.lua
+SpellsCooldown.lua
+SigMacros.lua

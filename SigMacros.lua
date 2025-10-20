@@ -311,7 +311,7 @@ function SIG_OrcEnrage()
     CastSpellByName("Blood Fury")
     -- CastSpellByName("Death Wish")
     -- CastSpellByName("Berserker Rage")
-    CastSpellByName("Bloodrage")
+    -- CastSpellByName("Bloodrage")
 end
 
 function SIG_Tank(Shield)
@@ -337,15 +337,34 @@ function SIG_Tank(Shield)
     -- end
 end
 
-function SIG_ArmsRotation()
+function SIG_ArmsRotation(isPVP)
+
+    -- if isPVP == nil then isPVP = false end
     CastSpellByName("Overpower")
-    CastSpellByName("Mortal Strike");
-    if not SIG_IsMortalStrikeReady() then
-        if st_timer>UnitAttackSpeed("player")*0.9 then 
-            CastSpellByName("Slam") 
+    if isPVP then
+        CastSpellByName("Mortal Strike");
+        if UnitMana("player")>=42 then 
+                CastSpellByName("Heroic Strike") 
         end
-        CastSpellByName("Heroic Strike");
+        if not SIG_IsMortalStrikeReady() then
+            if st_timer>UnitAttackSpeed("player")*0.6 then 
+                CastSpellByName("Slam") 
+            end
+            -- SIG_WarriorDebuffs()
+        end
+    else
+        CastSpellByName("Bloodthirst");
+        if not SIG_IsBloodthirstReady() then
+            CastSpellByName("Heroic Strike");
+        end
     end
+
+end
+
+function IsUsingDualWield()
+    -- Slot 17 é a mão secundária (off-hand)
+    local offHandLink = GetInventoryItemLink("player", 17)
+    return offHandLink ~= nil
 end
 
 -- ROTAÇÕES --
@@ -361,47 +380,29 @@ function SIG_FuryRotation(isPVP)
             CastSpellByName("Heroic Strike");
         end
     else
-        local primarySpells = SIG_IsBloodthirstReady() or SIG_IsWhirlwindReady()
-        if not primarySpells then
-            if st_timer>UnitAttackSpeed("player")*0.9 then 
-                CastSpellByName("Slam") 
-            end
-            if UnitMana("player")>12 then 
-                CastSpellByName("Heroic Strike") 
-            end
-        else
-            -- SpellStopCasting()
             CastSpellByName("Bloodthirst");
             CastSpellByName("Whirlwind");
-        end
+        -- local primarySpells = SIG_IsBloodthirstReady() or SIG_IsWhirlwindReady()
+        --if not primarySpells then
+            if UnitMana("player")>=42 then 
+                CastSpellByName("Heroic Strike") 
+            end
+            if not IsUsingDualWield() then
+                if st_timer>UnitAttackSpeed("player")*0.6 then 
+                    CastSpellByName("Slam") 
+                end
+            end
+        -- else
+            -- SpellStopCasting()
+            -- CastSpellByName("Bloodthirst");
+            -- CastSpellByName("Whirlwind");
+        -- end
     end
 end
 
 function SIG_CastSlam()
     if SIG_GetMHSwingTime() >= 2.5 then
         CastSpellByName("Slam")
-    end
-end
-
-function SIG_ArmsPvp(isPVP)
-    -- Cast overpower
-    SIG_Overpower()
-   
-    local primarySpells = SIG_IsMortalStrikeReady() or SIG_IsWhirlwindReady()
-    if not primarySpells then
-        local rage = UnitMana("player");
-        if SIG_IsCastingSlam() then
-            CastSpellByName("Heroic Strike");
-        end
-        if not isPVP then
-            CastSpellByName("Slam");
-            CastSpellByName("Heroic Strike");
-        end
-        -- SIG_CastSlam()
-    else
-        -- SpellStopCasting()
-        CastSpellByName("Mortal Strike");
-        -- CastSpellByName("Whirlwind");
     end
 end
 
